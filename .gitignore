@@ -1,0 +1,12 @@
+*.so
+*.dll
+*.o
+*.i
+*.exe
+*.l.h
+*.c.h
+*.SCR
+*gdb.py
+*.DAT
+*.DAT.*
+

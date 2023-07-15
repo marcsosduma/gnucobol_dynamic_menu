@@ -1,0 +1,125 @@
+       >>SOURCE FORMAT IS FREE
+*>****************************************************************
+*> Author: MARCOS DUMA
+*> Date: 25/06/2023
+*> Purpose:MENU PARA PROGRAMAS EM GNUCOBOL - CADASTRO DE USUARIOS
+*> Tectonics: cobc
+*>****************************************************************
+IDENTIFICATION      DIVISION.
+PROGRAM-ID.         moduser.
+AUTHOR.             Duma.
+ENVIRONMENT         DIVISION.
+CONFIGURATION    SECTION.
+SOURCE-COMPUTER. 
+             GNUCOBOL.
+OBJECT-COMPUTER. 
+             GNUCOBOL
+             CLASSIFICATION brazil.
+SPECIAL-NAMES.
+       CRT STATUS IS wCRT-STATUS.
+       CURSOR     IS wCursorRowCol.
+	   LOCALE brazil "pt_BR.UTF-8".
+       DECIMAL-POINT IS COMMA.
+INPUT-OUTPUT        SECTION.
+FILE-CONTROL.
+DATA DIVISION.
+FILE SECTION.
+WORKING-STORAGE     SECTION.
+*> desenhar o box ------------------------------------------------------
+77 WK-TEL01-CON                   PIC X(30) VALUE "MANUTENCAO DE USUARIOS".
+*> Constantes-----------------------------------------------------------
+01 ct-black   constant as 0.
+01 ct-blue    constant as 1.
+01 ct-green   constant as 2.
+01 ct-cyan    constant as 3.
+01 ct-red     constant as 4.
+01 ct-magenta constant as 5.
+01 ct-yellow  constant as 6.
+01 ct-white   constant as 7.
+*> variaveis comuns ----------------------------------------------------
+01  wCRT-STATUS                   PIC  9(004).
+01  wCursorRowCol                 PIC  9(006).
+01  redefines wCursorRowCol.
+    03  wCursorRow                Pic  9(003).
+    03  wCursorCol                Pic  9(003).    
+01  wINT                               BINARY-SHORT SIGNED.
+77  WK-NUML                       PIC  9(003) VALUE ZEROS.
+77  WK-NUMC                       PIC  9(003) VALUE ZEROS.
+77  COR-FUNDO                     PIC  9(001) VALUE 2.
+77  COR-FRENTE                    PIC  9(001) VALUE 0.
+01  WK-TECLA                      PIC  X(001) VALUE SPACES.
+*> desenhar o box ------------------------------------------------------
+01  WK-BOX-TIPO-BOX               PIC X(01) VALUE "B".
+01  WK-BOX-TIPO-SEP               PIC X(01) VALUE "L".
+01  WK-BOX-TIPO-LINHA             PIC 9(01) VALUE 2.
+01  WK-BOX-POS_X1                 PIC 9(03) VALUE 1.
+01  WK-BOX-POS_Y1                 PIC 9(03) VALUE 3.
+01  WK-BOX-POS_X2                 PIC 9(03) VALUE 80.
+01  WK-BOX-POS_Y2                 PIC 9(03) VALUE 22.
+01  WK-BOX-COR-FUNDO              PIC 9(03) VALUE ct-black.
+01  WK-BOX-COR-TEXTO              PIC 9(03) VALUE ct-white.
+01  WK-BOX-LINHA-POS_Y1           PIC 9(03) VALUE 5.
+
+SCREEN SECTION.
+01  SS-TELA-INICIO.
+    03  BLANK SCREEN.
+        05 LINE 01 COLUMN 01 ERASE EOL
+             BACKGROUND-COLOR COR-FUNDO.
+    03  LINE 01 COLUMN 29 FROM WK-TEL01-CON
+             FOREGROUND-COLOR COR-FRENTE BACKGROUND-COLOR COR-FUNDO.
+
+    03  LINE 23 COLUMN 01 PIC X(080) VALUE 
+            " F2 = Retornar | PAGE UP = Pag. Anterior | PAGE DOWN = Pag. a Frente | <SETAS>"
+            FOREGROUND-COLOR COR-FRENTE BACKGROUND-COLOR COR-FUNDO.
+    03  LINE 24 COLUMN 01 PIC X(080) VALUE SPACES.
+    03  LINE 24 COLUMN 01 VALUE "MENSAGEM: ".
+
+*>----------------------------------------------------------------------
+*>                     Modulo Principal do Programa                     
+*>----------------------------------------------------------------------
+PROCEDURE DIVISION.
+000-INICIO.
+    SET ENVIRONMENT 'COB_SCREEN_EXCEPTIONS' TO 'Y'
+    SET ENVIRONMENT 'COB_SCREEN_ESC'        TO 'Y'
+    SET ENVIRONMENT 'ESCDELAY'              TO '25'
+
+    ACCEPT WK-NUML FROM LINES
+    ACCEPT WK-NUMC FROM COLUMNS
+    MOVE   WK-NUMC TO WK-BOX-POS_X2
+
+    PERFORM 800-TELA-INICIAL
+
+    ACCEPT WK-TECLA LINE 24 COLUMN 79.
+    STOP RUN.
+
+*>----------------------------------------------------------------------
+800-TELA-INICIAL.
+    DISPLAY SS-TELA-INICIO.
+    *> DESENHO DO BOX
+    MOVE 1       TO WK-BOX-POS_X1
+    MOVE 3       TO WK-BOX-POS_Y1
+    MOVE WK-NUMC TO WK-BOX-POS_X2
+    MOVE 22      TO WK-BOX-POS_Y2
+    CALL 'makebox' using BY REFERENCE WK-BOX-TIPO-BOX      *> box
+                         BY REFERENCE WK-BOX-TIPO-LINHA    *> linha simples
+                         BY REFERENCE WK-BOX-POS_X1        *> col 1
+                         BY REFERENCE WK-BOX-POS_Y1        *> lin 1
+                         BY REFERENCE WK-BOX-POS_X2        *> col 2
+                         BY REFERENCE WK-BOX-POS_Y2        *> lin 2
+                         BY REFERENCE WK-BOX-COR-FUNDO     *> cor fundo
+                         BY REFERENCE WK-BOX-COR-TEXTO     *> col frente
+    END-CALL
+    *> LINHA DE SEPARACAO DAS SECOES
+    MOVE 5       TO WK-BOX-LINHA-POS_Y1
+    CALL 'makebox' using BY REFERENCE WK-BOX-TIPO-SEP      *> Lina de separacao
+                         BY REFERENCE WK-BOX-TIPO-LINHA    *> linha simples
+                         BY REFERENCE WK-BOX-POS_X1        *> col 1
+                         BY REFERENCE WK-BOX-LINHA-POS_Y1  *> lin 1
+                         BY REFERENCE WK-NUMC              *> col 2 
+                         BY REFERENCE WK-NUML              *> lin 2 (nao usado)
+                         BY REFERENCE WK-BOX-COR-FUNDO     *> cor fundo
+                         BY REFERENCE WK-BOX-COR-TEXTO     *> col frente
+    END-CALL.
+800-EXIT-TELA-INICIAL.
+    EXIT.
+*>----------------------------------------------------------------------

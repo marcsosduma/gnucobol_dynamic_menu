@@ -1,0 +1,14 @@
+00001PRINCIPAL      001MENU1          001HCADASTROS      CADASTROS                          
+00002PRINCIPAL      001MENU1          002HLANC           LANCAMENTOS                        
+00003PRINCIPAL      001MENU1          003HSAIR           SAIR                SAIR           
+00004PRINCIPAL      002CADASTROS      001VSUBCLIEN       CLIENTES            CLIENTE        
+00005PRINCIPAL      002CADASTROS      002VSUBFORNE       FORNECEDOR          FORNEC         
+00006PRINCIPAL      002CADASTROS      003VSUBBANCO       BANCOS                             
+00007PRINCIPAL      003LANC           001VSUBCREDI       CREDITOS            CREDITO        
+00008PRINCIPAL      003LANC           002VSUBDEBIT       DEBITOS             CREDITO               
+00009PRINCIPAL      003SUBBANCO       001VSUBBBRAS       BRASIL              BBRASIL        
+00010PRINCIPAL      003SUBBANCO       002VSUBBEXTE       EXTERIOR            BEXTERIOR      
+00011USUARIOS       004MENU2          001VINCUSR         INC. USUARIO        INC-USR               
+00012USUARIOS       004MENU2          002VALTUSR         ALT. USUARIO        ALR-USR               
+00013USUARIOS       004MENU2          003VVOLTAR         MENU PRINCIPAL      VOLTAR           
+                

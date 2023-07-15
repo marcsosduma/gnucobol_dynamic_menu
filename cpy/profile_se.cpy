@@ -1,0 +1,6 @@
+   SELECT FD-PRF ASSIGN TO DISK
+          ORGANIZATION         IS INDEXED
+          ACCESS MODE          IS DYNAMIC
+          RECORD KEY           IS KEY1-PRF
+          ALTERNATE RECORD KEY IS KEY2-PRF
+          FILE STATUS          IS ST-PRF.

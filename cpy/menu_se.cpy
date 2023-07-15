@@ -1,0 +1,6 @@
+   SELECT FD-MENU ASSIGN TO DISK
+          ORGANIZATION         IS INDEXED
+          ACCESS MODE          IS DYNAMIC
+          RECORD KEY           IS KEY1-MENU
+          ALTERNATE RECORD KEY IS KEY2-MENU
+          FILE STATUS          IS ST-MNU.
