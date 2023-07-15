@@ -6,7 +6,7 @@ This program generates a pulldown menu dynamically.
 It only returns items that the user has access to according 
 to the assigned profiles.
 
-It was written in version 3.1.2 of `GnuCobol`.
+It was written in version `3.1.2` of `GnuCobol`.
 
 Sample data can be loaded into the charge directory.
 
