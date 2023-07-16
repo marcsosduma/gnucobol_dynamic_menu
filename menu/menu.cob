@@ -100,36 +100,36 @@
        01  COB-MOUSE-FLAGS      PIC 9(04).
        77  WS-NUML              PIC 999.
        77  WS-NUMC              PIC 999.
-       01  WS-TIPO-MENU         PIC X(1).
+       01  WS-MENU-TYPE         PIC X(1).
        01  WS-IDX               PIC 9(03).
        01  WK-SPACES            PIC X(150) VALUE SPACES.
-       *> desenhar o box
+       *> to draw the box
        01  WK-BOX-TIPO-BOX               PIC X(01) VALUE "B".
-       01  WK-BOX-TIPO-LINHA             PIC 9(01) VALUE 1.
+       01  WK-BOX-TIPO-LINE              PIC 9(01) VALUE 1.
        01  WK-BOX-POS_X1                 PIC 9(03) VALUE 1.
        01  WK-BOX-POS_Y1                 PIC 9(03) VALUE 3.
        01  WK-BOX-POS_X2                 PIC 9(03) VALUE 80.
        01  WK-BOX-POS_Y2                 PIC 9(03) VALUE 22.
        
        LINKAGE SECTION.
-       01  TIPO-MENU PIC X(1).
+       01  MENU-TYPE PIC X(1).
        01  PARM.
            05 ITENS occurs 20 times pic x(20). 
-       01  NUMERO_ITENS             PIC 9(03).
+       01  QTD-ITENS                PIC 9(03).
        01  POS_X                    PIC 9(03).
        01  POS_Y                    PIC 9(03).
-       01  COR-FUNDO                PIC 9(03).
-       01  COR-TEXTO                PIC 9(03).
-       01  COR-SEL-FUNDO            PIC 9(03).
-       01  COR-SEL-TEXTO            PIC 9(03).
-       01  ITEM-SELECIONADO         PIC 9(03).
+       01  COLOR-BACKG              PIC 9(03).
+       01  COLOR-TEXT               PIC 9(03).
+       01  COLOR-SEL-BKG            PIC 9(03).
+       01  COLOR-SEL-TXT            PIC 9(03).
+       01  ITEM-SELECTED            PIC 9(03).
        01  POS-ITEM-SEL-X           PIC 9(03).
        01  POS-ITEM-SEL-Y           PIC 9(03).
-       01  TAM-MENU-X               PIC 9(03).
+       01  SIZE-MENU-X              PIC 9(03).
 
-       PROCEDURE DIVISION USING TIPO-MENU PARM NUMERO_ITENS POS_X POS_Y COR-FUNDO 
-                                COR-TEXTO COR-SEL-FUNDO COR-SEL-TEXTO ITEM-SELECIONADO 
-                                POS-ITEM-SEL-X POS-ITEM-SEL-Y TAM-MENU-X.
+       PROCEDURE DIVISION USING MENU-TYPE PARM QTD-ITENS POS_X POS_Y COLOR-BACKG 
+                                COLOR-TEXT COLOR-SEL-BKG COLOR-SEL-TXT ITEM-SELECTED 
+                                POS-ITEM-SEL-X POS-ITEM-SEL-Y SIZE-MENU-X.
        INICIO.
            SET ENVIRONMENT 'COB_SCREEN_EXCEPTIONS' TO 'Y'.
            SET ENVIRONMENT 'COB_SCREEN_ESC' TO 'Y'.
@@ -140,22 +140,22 @@
            IF  OS <> "Windows_NT"
               MOVE "LINUX" TO OS
            END-IF
-           MOVE COR-FUNDO TO menu-bg.
-           MOVE COR-TEXTO TO MENU-FG.
-           perform varying k from 1 by 1 until k > NUMERO_ITENS
+           MOVE COLOR-BACKG TO menu-bg.
+           MOVE COLOR-TEXT TO MENU-FG.
+           perform varying k from 1 by 1 until k > QTD-ITENS
                MOVE ITENS(k) to ARRAY(k)
            end-perform.
-           MOVE NUMERO_ITENS TO Item-Num.
-           IF ITEM-SELECIONADO<=0 
+           MOVE QTD-ITENS TO Item-Num.
+           IF ITEM-SELECTED<=0 
                MOVE 1 TO SELECAO
            else 
-               MOVE ITEM-SELECIONADO TO SELECAO
+               MOVE ITEM-SELECTED TO SELECAO
            END-IF
            MOVE 0 TO wInt.
            MOVE POS_Y TO box-pos-y.
            MOVE POS_X TO box-pos-x.
            MOVE 20 TO box-width.
-           MOVE TIPO-MENU TO WS-TIPO-MENU.
+           MOVE MENU-TYPE TO WS-MENU-TYPE.
            MOVE 0 TO doble-left-click.
            MOVE 0 TO atual-time.
            call static "curs_set" using by value wInt end-call.
@@ -167,7 +167,7 @@
                       + COB-ALLOW-MOUSE-MOVE
            SET environment "COB_MOUSE_FLAGS"  to COB-MOUSE-FLAGS.
            perform varying k from 1 by 1 until k > Item-Num  
-               IF WS-TIPO-MENU = "H"
+               IF WS-MENU-TYPE = "H"
                    MOVE SPACES TO TEXTO-MENU
                    MOVE ARRAY(K) TO TEXTO-MENU
                    MOVE FUNCTION LENGTH(FUNCTION TRIM(TEXTO-MENU TRAILING)) TO WS-IDX
@@ -181,8 +181,8 @@
        STOP RUN.
 
        DISP-MENU. 
-           IF WS-TIPO-MENU = "H" *> HORIZONTAL - PRINCIPAL
-                  display WK-SPACES(POS_X:TAM-MENU-X) at line box-pos-y col box-pos-x with BACKGROUND-COLOR menu-bg end-display
+           IF WS-MENU-TYPE = "H" *> HORIZONTAL - PRINCIPAL
+                  display WK-SPACES(POS_X:SIZE-MENU-X) at line box-pos-y col box-pos-x with BACKGROUND-COLOR menu-bg end-display
                   *>display SPACES at line box-pos-y col box-pos-x with  Background-Color menu-bg Foreground-Color menu-fg end-display
                   compute calc-x = box-pos-x + 1  end-compute
                   MOVE box-pos-y TO calc-y
@@ -191,7 +191,7 @@
                       MOVE SPACES TO TEXTO-MENU
                       MOVE ARRAY(K) TO TEXTO-MENU
                       IF SELECAO = K
-                             display TEXTO-MENU(1:TAM-ITEM(K)) at line calc-y col calc-x  with  Background-Color COR-SEL-FUNDO Foreground-Color COR-SEL-TEXTO highlight end-display
+                             display TEXTO-MENU(1:TAM-ITEM(K)) at line calc-y col calc-x  with  Background-Color COLOR-SEL-BKG Foreground-Color COLOR-SEL-TXT highlight end-display
                              MOVE calc-x TO POS-ITEM-SEL-X
                       else 
                              display TEXTO-MENU(1:TAM-ITEM(K)) at line calc-y col calc-x  with  Background-Color menu-bg Foreground-Color menu-fg end-display
@@ -203,13 +203,13 @@
                   compute calc-x = box-pos-x + 1 end-compute
            END-IF
 
-           IF WS-TIPO-MENU = "V" *> MENU VERTICAL - PULLDOWN
+           IF WS-MENU-TYPE = "V" *> MENU VERTICAL - PULLDOWN
                   MOVE box-pos-x TO WK-BOX-POS_X1
                   MOVE box-pos-y TO WK-BOX-POS_Y1
                   compute WK-BOX-POS_X2 = box-pos-x + box-width + 1 end-compute
                   compute WK-BOX-POS_Y2 = box-pos-y + Item-Num + 1 end-compute
                   CALL 'makebox' using BY REFERENCE WK-BOX-TIPO-BOX      *> box
-                                       BY REFERENCE WK-BOX-TIPO-LINHA    *> linha simples
+                                       BY REFERENCE WK-BOX-TIPO-LINE    *> linha simples
                                        BY REFERENCE WK-BOX-POS_X1        *> col 1
                                        BY REFERENCE WK-BOX-POS_Y1        *> lin 1
                                        BY REFERENCE WK-BOX-POS_X2        *> col 2
@@ -221,7 +221,7 @@
                       compute calc-y = box-pos-y + k end-compute
                       compute calc-x = box-pos-x + 1 end-compute
                       IF SELECAO = K
-                             display ARRAY(K) at line calc-y col calc-x  with  Background-Color COR-SEL-FUNDO Foreground-Color COR-SEL-TEXTO  highlight end-display
+                             display ARRAY(K) at line calc-y col calc-x  with  Background-Color COLOR-SEL-BKG Foreground-Color COLOR-SEL-TXT  highlight end-display
                              MOVE calc-y TO POS-ITEM-SEL-Y
                       else 
                              display ARRAY(K) at line calc-y col calc-x  with  Background-Color menu-bg Foreground-Color menu-fg end-display
@@ -236,7 +236,7 @@
            IF SELECAO = 1
                accept wDummy at line calc-y col calc-x 
                with auto-skip prompt character is wPrompt 
-               with  Background-Color COR-SEL-FUNDO Foreground-Color COR-SEL-TEXTO  highlight end-accept
+               with  Background-Color COLOR-SEL-BKG Foreground-Color COLOR-SEL-TXT  highlight end-accept
            else 
                accept wDummy at line calc-y col calc-x 
                with auto-skip prompt character is wPrompt 
@@ -247,7 +247,7 @@
                  go DISP-MENU-FIM
               END-IF
               IF wCRT-STATUS = K-LEFT-DBL-CLICK or wCRT-STATUS = K-RIGHT-PRESSED
-                   IF WS-TIPO-MENU='V'
+                   IF WS-MENU-TYPE='V'
                        COMPUTE calc-x = POS_X + LENGTH OF ARRAY(1) end-compute
                        COMPUTE calc-y = POS_Y + Item-Num + 1 end-compute
                        IF (wCursorCol > POS_X and wCursorCol<calc-x
@@ -295,7 +295,7 @@
                               compute SELECAO = SELECAO - 1 end-compute
                          END-IF
                      WHEN wCRT-STATUS = K-LEFT-PRESSED or wCRT-STATUS = K-LEFT-DBL-CLICK
-                          IF WS-TIPO-MENU='V'
+                          IF WS-MENU-TYPE='V'
                               COMPUTE calc-x = POS_X + LENGTH OF ARRAY(1) end-compute
                               COMPUTE calc-y = POS_Y + Item-Num + 1 end-compute
                               IF (wCursorCol > POS_X and wCursorCol<calc-x
@@ -317,8 +317,8 @@
                               END-IF
                               *>display "mouse: "wCursorRow" "wCursorCol  at line calc-y col calc-x  with  Background-Color menu-bg Foreground-Color menu-fg end-display
                               if wCRT-STATUS = K-LEFT-DBL-CLICK
-                                  *> AGUARDA ALGUNS MILESEGUNDOS...
-                                  call "CBL_GC_NANOSLEEP" USING 500000000 end-call
+                                  *> WAIT A FEW MILLISECONDS...
+                                  call "CBL_GC_NANOSLEEP" USING 300000000 end-call
                               end-if
                            ELSE 
                               MOVE POS_X TO  WS-IDX
@@ -344,7 +344,7 @@
                                      end-if
                                      *>display "mouse: "wCursorRow" "wCursorCol  at line calc-y col calc-x  with  Background-Color menu-bg Foreground-Color menu-fg end-display
                                      if wCRT-STATUS = K-LEFT-DBL-CLICK
-                                         *> AGUARDA ALGUNS MILESEGUNDOS...
+                                         *> WAIT A FEW MILLISECONDS...
                                          call "CBL_GC_NANOSLEEP" USING 500000000 end-call
                                      end-if
                                      COMPUTE WS-IDX = WS-IDX + TAM-ITEM(K) END-COMPUTE
@@ -354,7 +354,7 @@
            end-if
            go to DISP-MENU.
        DISP-MENU-FIM.
-           move SELECAO to ITEM-SELECIONADO.
+           move SELECAO to ITEM-SELECTED.
            move 2 to wInt.
            call static "curs_set" using by value wInt end-call.
            EXIT PROGRAM.

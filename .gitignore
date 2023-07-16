@@ -6,6 +6,7 @@
 *.l.h
 *.c.h
 *.SCR
+*.c
 *gdb.py
 *.DAT
 *.DAT.*
