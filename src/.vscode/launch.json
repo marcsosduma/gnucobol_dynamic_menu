@@ -14,7 +14,7 @@
                 "-x",
                 "-lpdcurses"
             ],
-            "coverage": false,
+            "verbose": true,
             "gdbtty": true
         },
         {
